@@ -1,0 +1,16 @@
+# Ignore virtual environment
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+*.pyd
+*.so
+
+# OS / IDE files
+.DS_Store
+*.env
+*.log
+*.sqlite3
+*.swp
+*.bak
+*.egg-info/
