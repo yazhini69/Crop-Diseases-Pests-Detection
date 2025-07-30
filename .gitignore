@@ -1,16 +1,15 @@
-# Ignore virtual environment
+# Ignore virtual environments
 venv/
 backend/venv/
+
+# Ignore common Python files
 __pycache__/
 *.pyc
 *.pyd
-*.so
 
-# OS / IDE files
+# IDE and OS
+.env
 .DS_Store
-*.env
 *.log
-*.sqlite3
-*.swp
-*.bak
-*.egg-info/
+.vscode/
+.idea/
