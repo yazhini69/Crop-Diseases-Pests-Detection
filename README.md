@@ -73,7 +73,7 @@ pip install -r requirements.txt
 4. Run the Server
 
 python app.py
-Server runs at: http://localhost:5001
+Open the live server or directly open via internet explorer
 
 🧠 Model Details
 The model is trained on a dataset of annotated plant disease and pest images using a Convolutional Neural Network (CNN). You can replace the default pest_disease_model.pkl with your own trained model.
