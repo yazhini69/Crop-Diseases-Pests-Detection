@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plant Pest & Disease Detector</title>
+  <style>
+    /* Reset some */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7f6;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      color: #2d6a4f;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 40px;
+      color: #52796f;
+    }
+
+    .upload-container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    #fileInput {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding: 8px;
+      border: 2px dashed #52796f;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+      background: #e9f1ef;
+      transition: background-color 0.3s ease;
+    }
+    #fileInput:hover {
+      background: #d1e5db;
+    }
+
+    #uploadBtn {
+      background-color: #2d6a4f;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      padding: 12px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+    #uploadBtn:disabled {
+      background-color: #95b7a1;
+      cursor: not-allowed;
+    }
+    #uploadBtn:hover:not(:disabled) {
+      background-color: #1b4332;
+    }
+
+    #result {
+      margin-top: 30px;
+      background: #d8f3dc;
+      border-radius: 10px;
+      padding: 25px 30px;
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
+      max-width: 500px;
+      width: 100%;
+      color: #14532d;
+      text-align: left;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    #result h3 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1b4332;
+    }
+  </style>
+</head>
+<body>
+  <h1>Plant Pest & Disease Detector</h1>
+  <h2>Upload a photo of your plant leaf to identify diseases and pests, and get treatment advice</h2>
+
+  <div class="upload-container">
+    <input type="file" id="fileInput" accept="image/*" />
+    <button id="uploadBtn">Upload & Detect</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const resultDiv = document.getElementById('result');
+
+    console.log("Page loaded at " + new Date().toLocaleTimeString());
+    window.onbeforeunload = () => {
+      console.log("Page is unloading");
+    };
+
+    window.onload = () => {
+      const saved = localStorage.getItem('lastResult');
+      if (saved) {
+        resultDiv.innerHTML = saved;
+      }
+    };
+
+    uploadBtn.addEventListener('click', async () => {
+      if (!fileInput.files.length) {
+        alert('Please select an image file first.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      uploadBtn.disabled = true;
+      resultDiv.innerHTML = 'Uploading and detecting...';
+
+      try {
+        const response = await fetch('http://localhost:5001/predict', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          resultDiv.innerHTML = `<p style="color: red;">Error: ${errorData.error || 'Unknown error'}</p>`;
+          localStorage.setItem('lastResult', resultDiv.innerHTML);
+          uploadBtn.disabled = false;
+          return;
+        }
+
+        const data = await response.json();
+
+        resultDiv.innerHTML = `
+          <h3>Prediction: ${data.predicted_class}</h3>
+          <p><strong>Symptoms:</strong> ${data.symptoms}</p>
+          <p><strong>Treatment:</strong> ${data.treatment}</p>
+        `;
+
+        localStorage.setItem('lastResult', resultDiv.innerHTML);
+
+      } catch (err) {
+        resultDiv.innerHTML = `<p style="color: red;">Failed to connect to the server.</p>`;
+        localStorage.setItem('lastResult', resultDiv.innerHTML);
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+flask
+joblib
+tensorflow
+numpy
+pillow
+
