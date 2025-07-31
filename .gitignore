@@ -1,0 +1,11 @@
+# Ignore model files
+*.h5
+*.pkl
+
+# Ignore virtual environment
+venv/
+__pycache__/
+
+# Ignore IDE/workspace files
+.vscode/
+.idea/
