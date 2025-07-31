@@ -9,3 +9,12 @@ __pycache__/
 # Ignore IDE/workspace files
 .vscode/
 .idea/
+# .gitignore
+venv/
+*.h5
+*.pkl
+*.pyd
+*.dll
+__pycache__/
+*.pyc
+.DS_Store
