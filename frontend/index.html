@@ -3,146 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <title>Plant Pest & Disease Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    /* Reset some */
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f7f6;
       margin: 0;
-      padding: 0;
+      padding: 60px 15px 40px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 40px 20px;
-      color: #333;
+      background:
+        linear-gradient(135deg, #e5faeecc 8%, #dae7d7d0 100%),
+        url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80')
+          no-repeat center center fixed;
+      background-size: cover;
+      color: #2a4d31;
+      overflow-x: hidden;
+      perspective: 1200px;
+      position: relative;
     }
-
+    body::after {
+      content: "";
+      position: fixed; left: 0; top: 0; right: 0; bottom: 0;
+      background: rgba(245,255,240,0.53); /* soft overlay for readability */
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes floatLeaves {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.7;}
+      50% { opacity: 1;}
+      100% {transform: translateY(-120vh) rotate(360deg); opacity: 0;}
+    }
+    .leaf {
+      position: fixed;
+      bottom: -100px;
+      width: 40px; height: 40px;
+      background: url('https://i.ibb.co/TWbQqkv/leaf.png') no-repeat center/contain;
+      opacity: 0.7;
+      animation-name: floatLeaves;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      pointer-events: none;
+      filter: drop-shadow(0 1.5px 2px rgba(0,0,0,0.15));
+      z-index: 0;
+    }
+    .leaf:nth-child(1) { left: 10vw; animation-duration: 26s; animation-delay: 0s;}
+    .leaf:nth-child(2) { left: 30vw; animation-duration: 22s; animation-delay: 5s;}
+    .leaf:nth-child(3) { left: 60vw; animation-duration: 28s; animation-delay: 3s; width: 50px; height: 50px;}
+    .leaf:nth-child(4) { left: 80vw; animation-duration: 24s; animation-delay: 7s;}
     h1 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin-bottom: 8px;
-      color: #2d6a4f;
+      font-weight: 900;
+      font-size: 3rem;
+      margin-bottom: 0.1em;
+      text-align: center;
+      color: #1b371a;
+      text-shadow: 2px 2px 6px rgba(32, 83, 22, 0.25), 0 0 15px #5bd84f88;
+      letter-spacing: 1.2px;
+      user-select: none;
+      z-index: 10;
     }
-
     h2 {
-      font-weight: 400;
+      font-weight: 500;
       font-size: 1.2rem;
       margin-top: 0;
-      margin-bottom: 40px;
-      color: #52796f;
+      margin-bottom: 2.5em;
+      color: #3c6e30dd;
+      text-align: center;
+      max-width: 540px;
+      user-select: none;
+      z-index: 10;
     }
-
     .upload-container {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      padding: 30px 40px;
-      max-width: 500px;
+      background: linear-gradient(145deg, #effbef, #bdddb8);
+      border-radius: 20px;
+      box-shadow: 10px 10px 25px #b0d1a5, -10px -10px 33px #ffffff;
+      padding: 40px 50px;
+      max-width: 480px;
       width: 100%;
       text-align: center;
+      transition: box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d; perspective: 800px;
+      z-index: 10; cursor: default;
+      position: relative;
     }
-
+    .upload-container:hover {
+      box-shadow: 15px 15px 35px #a8c38c, -15px -15px 45px #e8f1de;
+      transform: translateZ(15px);
+    }
     #fileInput {
-      margin-top: 10px;
-      margin-bottom: 20px;
-      padding: 8px;
-      border: 2px dashed #52796f;
-      border-radius: 6px;
+      margin-top: 15px; margin-bottom: 30px; padding: 14px;
+      border: 3px dashed #529150;
+      border-radius: 12px;
       width: 100%;
+      background: #e6f3e1;
+      font-size: 1rem; color: #3e7043;
       cursor: pointer;
-      background: #e9f1ef;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s, border-color 0.3s;
+      user-select: none; outline-offset: 3px;
     }
-    #fileInput:hover {
-      background: #d1e5db;
+    #fileInput:hover, #fileInput:focus {
+      background-color: #d6ead1; border-color: #3f7d35;
     }
-
+    #fileInput::-webkit-file-upload-button {
+      cursor: pointer; background: #529150; border: none; padding: 10px 20px;
+      color: white; font-weight: 600; border-radius: 6px; transition: background 0.3s;
+    }
+    #fileInput::-webkit-file-upload-button:hover { background: #3f7d35; }
     #uploadBtn {
-      background-color: #2d6a4f;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      padding: 12px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 100%;
+      background-color: #3c7d2f;
+      border: none; color: white; font-size: 1.1rem; font-weight: 700;
+      padding: 15px 0; width: 100%; border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(60,125,47,0.6);
+      cursor: pointer; transition: background 0.3s, transform 0.24s;
+      user-select: none;
     }
-    #uploadBtn:disabled {
-      background-color: #95b7a1;
-      cursor: not-allowed;
-    }
-    #uploadBtn:hover:not(:disabled) {
-      background-color: #1b4332;
-    }
-
+    #uploadBtn:hover:not(:disabled) { background: #2a5e1d; transform: translateY(-2px);}
+    #uploadBtn:disabled { background: #a0bc9a; cursor: not-allowed; box-shadow: none;}
     #result {
-      margin-top: 30px;
-      background: #d8f3dc;
-      border-radius: 10px;
-      padding: 25px 30px;
-      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
-      max-width: 500px;
-      width: 100%;
-      color: #14532d;
-      text-align: left;
-      font-size: 1rem;
-      line-height: 1.5;
+      margin-top: 40px; background: #d9efd8;
+      border-radius: 15px; padding: 32px 30px;
+      box-shadow: 0 10px 24px rgba(36,96,26,0.35);
+      max-width: 480px; width: 100%; color: #164317;
+      text-align: left; font-size: 1rem; line-height: 1.6; user-select: text;
+      transform-style: preserve-3d; perspective: 600px; transition: opacity 0.4s;
+      z-index: 10;
     }
-
     #result h3 {
-      margin-top: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1b4332;
+      margin-top: 0; font-size: 1.7rem; font-weight: 800; color: #1b431c;
+      text-shadow: 0 0 6px #6bbf68; user-select: text;
+    }
+    @media (max-width: 520px) {
+      .upload-container, #result { padding: 30px 24px; }
+      h1 { font-size: 2.4rem; }
+      h2 { font-size: 1.1rem; margin-bottom: 2em;}
+      #fileInput { padding: 12px; }
+      #uploadBtn { font-size: 1rem; padding: 14px 0; }
+      #result { padding: 24px 20px; font-size: 0.95rem;}
     }
   </style>
 </head>
 <body>
-  <h1>Plant Pest & Disease Detector</h1>
+  <!-- Floating animated leaves -->
+  <div class="leaf" style="left:10vw; animation-delay: 0s;"></div>
+  <div class="leaf" style="left:30vw; animation-delay: 6s; width:50px; height:50px;"></div>
+  <div class="leaf" style="left:60vw; animation-delay: 3s;"></div>
+  <div class="leaf" style="left:80vw; animation-delay: 9s;"></div>
+
+  <h1>Plant Pest &amp; Disease Detector</h1>
   <h2>Upload a photo of your plant leaf to identify diseases and pests, and get treatment advice</h2>
 
-  <div class="upload-container">
-    <input type="file" id="fileInput" accept="image/*" />
-    <button id="uploadBtn">Upload & Detect</button>
+  <div class="upload-container" aria-label="Upload container for plant disease detection">
+    <input
+      type="file"
+      id="fileInput"
+      accept="image/*"
+      aria-describedby="uploadHint"
+      aria-label="Upload plant leaf image"
+    />
+    <button id="uploadBtn" disabled>Upload & Detect</button>
   </div>
-
-  <div id="result"></div>
+  <div id="result" role="region" aria-live="polite" aria-atomic="true"></div>
 
   <script>
     const uploadBtn = document.getElementById('uploadBtn');
     const fileInput = document.getElementById('fileInput');
     const resultDiv = document.getElementById('result');
 
-    console.log("Page loaded at " + new Date().toLocaleTimeString());
-    window.onbeforeunload = () => {
-      console.log("Page is unloading");
-    };
-
-    window.onload = () => {
-      const saved = localStorage.getItem('lastResult');
-      if (saved) {
-        resultDiv.innerHTML = saved;
-      }
-    };
+    fileInput.addEventListener('change', () => {
+      uploadBtn.disabled = !fileInput.files.length;
+    });
 
     uploadBtn.addEventListener('click', async () => {
       if (!fileInput.files.length) {
         alert('Please select an image file first.');
         return;
       }
-
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append('file', file);
 
       uploadBtn.disabled = true;
+      resultDiv.style.opacity = '0.6';
       resultDiv.innerHTML = 'Uploading and detecting...';
 
       try {
@@ -154,8 +197,8 @@
         if (!response.ok) {
           const errorData = await response.json();
           resultDiv.innerHTML = `<p style="color: red;">Error: ${errorData.error || 'Unknown error'}</p>`;
-          localStorage.setItem('lastResult', resultDiv.innerHTML);
           uploadBtn.disabled = false;
+          resultDiv.style.opacity = '1';
           return;
         }
 
@@ -166,12 +209,10 @@
           <p><strong>Symptoms:</strong> ${data.symptoms}</p>
           <p><strong>Treatment:</strong> ${data.treatment}</p>
         `;
-
-        localStorage.setItem('lastResult', resultDiv.innerHTML);
-
+        resultDiv.style.opacity = '1';
       } catch (err) {
         resultDiv.innerHTML = `<p style="color: red;">Failed to connect to the server.</p>`;
-        localStorage.setItem('lastResult', resultDiv.innerHTML);
+        resultDiv.style.opacity = '1';
       } finally {
         uploadBtn.disabled = false;
       }
